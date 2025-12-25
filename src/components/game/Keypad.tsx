@@ -10,44 +10,29 @@ export function Keypad({ onInput, onClear, disabled }: KeypadProps) {
     const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
     return (
-        <div className="grid grid-cols-3 gap-3 w-full max-w-xs mx-auto">
-            {digits.slice(0, 9).map((digit) => (
+        <div className="flex flex-nowrap justify-center gap-1 w-full max-w-3xl mx-auto px-1">
+            {digits.map((digit) => (
                 <Button
                     key={digit}
                     variant="secondary"
                     size="lg"
                     onClick={() => onInput(digit)}
                     disabled={disabled}
-                    className="aspect-square text-3xl"
+                    className="flex-1 h-12 md:h-16 min-w-[32px] max-w-[64px] text-xl md:text-2xl font-bold p-0 rounded-lg shadow-md border-b-2 border-black/20 active:border-b-0 active:translate-y-0.5"
                 >
                     {digit}
                 </Button>
             ))}
 
-            {/* Centering the 0 and placing Reset next to it */}
-            <div className="col-start-2">
-                <Button
-                    variant="secondary"
-                    size="lg"
-                    onClick={() => onInput(0)}
-                    disabled={disabled}
-                    className="aspect-square text-3xl w-full"
-                >
-                    0
-                </Button>
-            </div>
-
-            <div className="col-start-3">
-                <Button
-                    variant="danger"
-                    size="lg"
-                    onClick={onClear}
-                    disabled={disabled}
-                    className="aspect-square text-lg w-full flex items-center justify-center font-bold"
-                >
-                    ⌫
-                </Button>
-            </div>
+            <Button
+                variant="danger"
+                size="lg"
+                onClick={onClear}
+                disabled={disabled}
+                className="flex-1 h-12 md:h-16 min-w-[32px] max-w-[64px] text-lg md:text-xl flex items-center justify-center font-bold p-0 rounded-lg shadow-md border-b-2 border-black/20 active:border-b-0 active:translate-y-0.5"
+            >
+                ⌫
+            </Button>
         </div>
     );
 }

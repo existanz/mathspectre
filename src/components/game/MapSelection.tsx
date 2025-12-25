@@ -20,7 +20,7 @@ export function MapSelection({ onSelect }: MapSelectionProps) {
     const { unlockedMaps } = useGameStore();
 
     return (
-        <div className="w-full h-full p-8 flex flex-col items-center">
+        <div className="w-full h-full p-8 flex flex-col items-center overflow-y-auto hide-scrollbar">
             <h2 className="text-4xl font-bold text-white mb-12 drop-shadow-lg">Выберите Карту</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">

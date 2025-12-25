@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Keypad } from '../game/Keypad';
 import { ComparisonKeypad } from '../game/ComparisonKeypad';
@@ -66,8 +66,26 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
         }
     };
 
+    // Keyboard support
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (isCorrect) return;
+
+            if (e.key >= '0' && e.key <= '9') {
+                handleInput(parseInt(e.key));
+            } else if (e.key === 'Backspace') {
+                setCurrentInput(prev => prev.slice(0, -1));
+            } else if (e.key === 'Enter') {
+                handleSubmit();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isCorrect, handleInput, handleSubmit]);
+
     return (
-        <div className="w-full h-full flex flex-col items-center justify-between py-4 max-w-lg mx-auto overflow-y-auto hide-scrollbar">
+        <div className="w-full h-full flex flex-col items-center justify-between py-4 max-w-3xl mx-auto overflow-y-auto hide-scrollbar">
 
             {/* Problem Display Area */}
             <div className="flex flex-col items-center gap-4 w-full flex-1 justify-center min-h-[200px]">
@@ -96,6 +114,14 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
                             {problem.type === 'comparison' && <span>{problem.valB}</span>}
                         </>
                     )}
+                    <Button
+                        onClick={handleSubmit}
+                        disabled={!currentInput || isCorrect}
+                        size="icon"
+                        className="ml-4 w-12 h-12 md:w-16 md:h-16 rounded-xl shadow-lg border-b-4 border-brand-secondary/50 active:border-b-0 active:translate-y-1 bg-brand-secondary hover:bg-brand-secondary/90 flex-shrink-0"
+                    >
+                        <span className="text-xl font-bold">Ok</span>
+                    </Button>
                 </div>
 
                 {/* Visual Hints Area */}
@@ -131,23 +157,16 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
             </div>
 
             {/* Input Area */}
-            <div className="w-full flex flex-col items-center gap-2 pb-4">
+            <div className="w-full flex flex-col items-center gap-2 pb-4 px-4">
                 {problem.type === 'comparison' ? (
                     <ComparisonKeypad onInput={handleComparisonInput} disabled={isCorrect} />
                 ) : (
-                    <div className="w-full max-w-[240px]">
+                    <div className="w-full flex justify-center">
                         <Keypad onInput={handleInput} onClear={handleClear} disabled={isCorrect} />
                     </div>
                 )}
 
-                <Button
-                    onClick={handleSubmit}
-                    disabled={!currentInput || isCorrect}
-                    size="md"
-                    className="w-full max-w-[240px] mt-2 py-3 text-lg"
-                >
-                    {isCorrect ? 'Отлично!' : 'Проверить'}
-                </Button>
+
             </div>
         </div>
     );
