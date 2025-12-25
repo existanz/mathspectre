@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { StarRating } from '../ui/StarRating';
 import { useGameStore } from '../../store/gameStore';
@@ -13,10 +14,17 @@ export function MathMap({ mapId, totalLevels = 10, onLevelSelect, colorTheme = '
     const { levels } = useGameStore();
 
     // Map-specific configuration
-    const mapConfig = mapId === 'map1' ? {
-        bgImage: '/images/maps/level1_map.png',
-        bgSize: 'cover'
-    } : null;
+    const mapConfig = useMemo(() => {
+        const match = mapId.match(/^map(\d+)$/);
+        if (match) {
+            const levelNum = match[1];
+            return {
+                bgImage: `/images/maps/level${levelNum}_map.png`,
+                bgSize: 'cover'
+            };
+        }
+        return null; // Fallback or no background
+    }, [mapId]);
 
     // Generate a winding path using sine wave logic
     const nodes = Array.from({ length: totalLevels }, (_, i) => {
