@@ -5,6 +5,7 @@ import { MathMap } from './components/game/MathMap';
 import { GameScreen } from './components/game/GameScreen';
 import { useGameStore } from './store/gameStore';
 import { Button } from './components/ui/Button';
+import { LEVEL_COORDINATES } from './data/maps';
 import { Home } from 'lucide-react';
 
 type ViewState = 'SELECTION' | 'MAP' | 'GAME';
@@ -49,8 +50,8 @@ function App() {
 
                     <MathMap
                         mapId={currentMapId}
-                        totalLevels={10}
                         onLevelSelect={handleLevelSelect}
+                        levelCoordinates={LEVEL_COORDINATES}
                     />
                 </div>
             )}
