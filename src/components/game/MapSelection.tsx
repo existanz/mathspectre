@@ -1,21 +1,11 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '../../store/gameStore';
-import { Lock, Calculator, Hash, Minus, Scale } from 'lucide-react';
-import { LEVEL_COORDINATES } from '../../data/maps';
+import { Lock } from 'lucide-react';
+import { LEVEL_COORDINATES, MAPS } from '../../data/maps';
 
 interface MapSelectionProps {
     onSelect: (mapId: string) => void;
 }
-
-const MAPS = [
-    { id: 'map1', title: 'Счет до 10', icon: Hash, iconUrl: '/images/maps/level1_icon.png', desc: 'Учимся считать предметы' },
-    { id: 'map2', title: 'Сложение до 10', icon: Calculator, iconUrl: '/images/maps/level2_icon.png', desc: 'Простые примеры на сложение' },
-    { id: 'map3', title: 'Вычитание до 10', icon: Minus, iconUrl: '/images/maps/level3_icon.png', desc: 'Учимся отнимать' },
-    { id: 'map4', title: 'Больше / Меньше', icon: Scale, iconUrl: '/images/maps/level4_icon.png', desc: 'Сравниваем количества' },
-    { id: 'map5', title: 'Сложение до 20', icon: Calculator, iconUrl: '/images/maps/level5_icon.png', desc: 'Сложные примеры' },
-    { id: 'map6', title: 'Вычитание до 20', icon: Minus, iconUrl: '/images/maps/level6_icon.png', desc: 'Сложное вычитание' },
-    { id: 'map7', title: 'Сравнение до 20', icon: Scale, iconUrl: '/images/maps/level7_icon.png', desc: 'Сравнение больших чисел' },
-];
 
 export function MapSelection({ onSelect }: MapSelectionProps) {
     const { unlockedMaps } = useGameStore();

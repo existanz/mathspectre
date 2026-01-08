@@ -5,13 +5,13 @@ import { MathMap } from './components/game/MathMap';
 import { GameScreen } from './components/game/GameScreen';
 import { useGameStore } from './store/gameStore';
 import { Button } from './components/ui/Button';
-import { LEVEL_COORDINATES } from './data/maps';
+import { LEVEL_COORDINATES, MAPS } from './data/maps';
 import { Home } from 'lucide-react';
 
 type ViewState = 'SELECTION' | 'MAP' | 'GAME';
 
 function App() {
-    const { currentMapId, setCurrentMap } = useGameStore();
+    const { currentMapId, setCurrentMap, unlockMap } = useGameStore();
 
     const [view, setView] = useState<ViewState>('SELECTION');
     const [activeLevel, setActiveLevel] = useState<number | null>(null);
@@ -30,6 +30,29 @@ function App() {
         // Return to map after completion to show stars update
         setView('MAP');
         setActiveLevel(null);
+
+        // Check if we should unlock the next map
+        // Calculate total stars for current map
+        let currentMapStars = 0;
+        const maxStars = LEVEL_COORDINATES.length * 3;
+        const freshLevels = useGameStore.getState().levels;
+
+        LEVEL_COORDINATES.forEach(coord => {
+            const levelKey = `${currentMapId}_level${coord.id}`;
+            const levelData = freshLevels[levelKey];
+            if (levelData) {
+                currentMapStars += levelData.stars;
+            }
+        });
+
+        if (currentMapStars === maxStars) {
+            // Find current map index
+            const currentIndex = MAPS.findIndex(m => m.id === currentMapId);
+            if (currentIndex !== -1 && currentIndex < MAPS.length - 1) {
+                const nextMap = MAPS[currentIndex + 1];
+                unlockMap(nextMap.id);
+            }
+        }
     };
 
     return (
