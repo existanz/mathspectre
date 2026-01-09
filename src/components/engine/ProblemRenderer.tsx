@@ -22,6 +22,7 @@ interface ProblemRendererProps {
 export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
     const [currentInput, setCurrentInput] = useState<string>('');
     const [showVictory, setShowVictory] = useState(false);
+    const [isError, setIsError] = useState(false);
     const { hintLevel, registerAttempt, stars, isCorrect } = useHintEngine();
 
     const handleInput = (num: number) => {
@@ -55,14 +56,19 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
             correct = userVal === problem.result;
         }
 
-        const isSuccess = registerAttempt(correct);
-
-        if (isSuccess) {
-            // Show victory modal instead of direct completion
-            setShowVictory(true);
+        if (correct) {
+            const isSuccess = registerAttempt(true);
+            if (isSuccess) {
+                setShowVictory(true);
+            }
         } else {
-            setCurrentInput('');
-            // Shake effect could go here
+            // Error animation
+            setIsError(true);
+            setTimeout(() => {
+                setIsError(false);
+                registerAttempt(false);
+                setCurrentInput('');
+            }, 500);
         }
     };
 
@@ -114,14 +120,24 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
                             {problem.type === 'comparison' && <span>{problem.valB}</span>}
                         </>
                     )}
-                    <Button
-                        onClick={handleSubmit}
-                        disabled={!currentInput || isCorrect}
-                        size="icon"
-                        className="ml-4 w-12 h-12 md:w-16 md:h-16 rounded-xl shadow-lg border-b-4 border-brand-secondary/50 active:border-b-0 active:translate-y-1 bg-brand-secondary hover:bg-brand-secondary/90 flex-shrink-0"
+                    <motion.div
+                        animate={isError ? { x: [-10, 10, -10, 10, 0] } : {}}
+                        transition={{ duration: 0.4 }}
                     >
-                        <span className="text-xl font-bold">Ok</span>
-                    </Button>
+                        <Button
+                            onClick={handleSubmit}
+                            disabled={!currentInput || isCorrect || isError}
+                            size="icon"
+                            className={`ml-4 w-12 h-12 md:w-16 md:h-16 rounded-xl shadow-lg border-b-4 active:border-b-0 active:translate-y-1 flex-shrink-0 transition-colors duration-200 ${isError
+                                    ? 'bg-red-500 hover:bg-red-600 border-red-700'
+                                    : 'bg-brand-secondary hover:bg-brand-secondary/90 border-brand-secondary/50'
+                                }`}
+                        >
+                            <span className="text-xl font-bold">
+                                {isError ? '😖' : 'Ok'}
+                            </span>
+                        </Button>
+                    </motion.div>
                 </div>
 
                 {/* Visual Hints Area */}
