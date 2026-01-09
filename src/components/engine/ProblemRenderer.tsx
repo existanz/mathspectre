@@ -5,6 +5,7 @@ import { ComparisonKeypad } from '../game/ComparisonKeypad';
 import { VisualHint } from '../game/VisualHint';
 import { useHintEngine, HintLevel } from '../../engine/hintEngine';
 import { Button } from '../ui/Button';
+import { VictoryModal } from '../game/VictoryModal';
 
 interface Problem {
     type: 'addition' | 'subtraction' | 'counting' | 'comparison';
@@ -20,6 +21,7 @@ interface ProblemRendererProps {
 
 export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
     const [currentInput, setCurrentInput] = useState<string>('');
+    const [showVictory, setShowVictory] = useState(false);
     const { hintLevel, registerAttempt, stars, isCorrect } = useHintEngine();
 
     const handleInput = (num: number) => {
@@ -56,10 +58,8 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
         const isSuccess = registerAttempt(correct);
 
         if (isSuccess) {
-            // Small delay before notifying completion to show success state
-            setTimeout(() => {
-                onComplete(stars as 0 | 1 | 2 | 3);
-            }, 1500);
+            // Show victory modal instead of direct completion
+            setShowVictory(true);
         } else {
             setCurrentInput('');
             // Shake effect could go here
@@ -168,6 +168,15 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
 
 
             </div>
+            {/* Victory Modal */}
+            <AnimatePresence>
+                {showVictory && (
+                    <VictoryModal
+                        stars={stars}
+                        onNext={() => onComplete(stars)}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }
