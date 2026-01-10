@@ -57,7 +57,6 @@ export function VictoryModal({ stars, onNext }: VictoryModalProps) {
                 exit={{ scale: 0.8, opacity: 0 }}
                 className="bg-slate-800 border border-slate-700 p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-8 max-w-sm w-full"
             >
-                {/* Title */}
                 <motion.h2
                     initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -67,18 +66,15 @@ export function VictoryModal({ stars, onNext }: VictoryModalProps) {
                     {title}
                 </motion.h2>
 
-                {/* Stars Container */}
                 <div className="flex gap-4">
                     {[1, 2, 3].map((index) => (
                         <div key={index} className="relative">
-                            {/* Empty Star Background */}
                             <Star
                                 size={48}
                                 className="text-slate-600"
                                 strokeWidth={1.5}
                             />
 
-                            {/* Filled Star Overlay */}
                             <AnimatePresence>
                                 {visibleStars >= index && (
                                     <motion.div
@@ -103,7 +99,6 @@ export function VictoryModal({ stars, onNext }: VictoryModalProps) {
                     ))}
                 </div>
 
-                {/* Placeholder for future effects */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
                     {/* <VictoryEffects /> */}
                 </div>

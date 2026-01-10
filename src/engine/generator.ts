@@ -1,3 +1,5 @@
+import type { ProblemConfig } from '../data/maps';
+
 export type ProblemType = 'counting' | 'addition' | 'subtraction' | 'comparison';
 
 export interface GeneratedProblem {
@@ -10,97 +12,66 @@ export interface GeneratedProblem {
 // Random integer between min and max (inclusive)
 const rand = (min: number, max: number) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-export function generateProblem(mapId: string, level: number): GeneratedProblem {
-    // Config based on map type
+export function generateProblem(config: ProblemConfig, level: number): GeneratedProblem {
+    const { type, limit, isAdvanced } = config;
 
-    const isAdvanced = ['map5', 'map6', 'map7'].includes(mapId);
-    const maxLimit = isAdvanced ? 20 : 10;
+    // logic based on level progression within constraints
+    // simple scaling: early levels use smaller numbers, later levels use up to limit
+    let currentLimit = limit;
 
-    // Map 1: Counting 0-10
-    if (mapId === 'map1') {
-        const maxVal = level <= 3 ? 5 : 10;
-        const val = rand(1, maxVal);
+    // Linear progression for difficulty
+    // Level 1-3: Easy (approx 50% of limit)
+    // Level 4-7: Medium (approx 80% of limit)
+    // Level 8+: Hard (100% of limit)
 
-        return {
-            type: 'counting',
-            valA: val,
-            result: val
-        };
+    if (level <= 3) {
+        currentLimit = Math.max(5, Math.floor(limit * 0.5)); // min 5 for very small limits
+        if (isAdvanced) currentLimit = Math.floor(limit * 0.6);
+    } else if (level <= 7) {
+        currentLimit = Math.max(8, Math.floor(limit * 0.8));
+        if (isAdvanced) currentLimit = Math.floor(limit * 0.8);
     }
 
-    // Map 2 & 5: Addition
-    if (mapId === 'map2' || mapId === 'map5') {
-        let currentLimit = maxLimit;
-        if (!isAdvanced) {
-            currentLimit = level <= 3 ? 5 : level <= 7 ? 8 : 10;
-        } else {
-            // Advanced: Scale from 10 to 20
-            currentLimit = level <= 3 ? 12 : level <= 7 ? 16 : 20;
+    // Ensure we don't exceed the hard limit
+    currentLimit = Math.min(currentLimit, limit);
+
+    switch (type) {
+        case 'counting': {
+            const val = rand(1, currentLimit);
+            return { type, valA: val, result: val };
         }
 
-        const valA = rand(1, currentLimit - 1);
-        const valB = rand(1, currentLimit - valA);
+        case 'addition': {
+            const valA = rand(1, currentLimit - 1);
+            const valB = rand(1, currentLimit - valA);
+            return { type, valA, valB, result: valA + valB };
+        }
 
-        return {
-            type: 'addition',
-            valA,
-            valB,
-            result: valA + valB
-        };
+        case 'subtraction': {
+            const valA = rand(2, currentLimit);
+            const valB = rand(1, valA); // Result can be 0? Original code had rand(1, valA) so result >= 0
+            // logic check: valA - valB >= 0 is guaranteed if valB <= valA
+            return { type, valA, valB, result: valA - valB };
+        }
+
+        case 'comparison': {
+            let valA = rand(1, currentLimit);
+            let valB = rand(1, currentLimit);
+
+            // Force close numbers for higher difficulty
+            if (level > 4 && Math.random() > 0.4) {
+                valB = valA + rand(-1, 1);
+                if (valB < 1) valB = 1;
+            }
+
+            let result = 3; // Equal
+            if (valA > valB) result = 1;
+            if (valA < valB) result = 2;
+
+            return { type, valA, valB, result };
+        }
     }
 
-    // Map 3 & 6: Subtraction
-    if (mapId === 'map3' || mapId === 'map6') {
-        let currentLimit = maxLimit;
-        if (isAdvanced) {
-            currentLimit = level <= 3 ? 12 : level <= 7 ? 16 : 20;
-        } else {
-            currentLimit = level <= 3 ? 5 : 10;
-        }
-
-        const valA = rand(2, currentLimit);
-        const valB = rand(1, valA);
-
-        return {
-            type: 'subtraction',
-            valA,
-            valB,
-            result: valA - valB
-        };
-    }
-
-    // Map 4 & 7: Comparison (>, <, =)
-    if (mapId === 'map4' || mapId === 'map7') {
-        let currentLimit = maxLimit;
-        if (isAdvanced) {
-            currentLimit = level <= 3 ? 12 : 20;
-        }
-
-        let valA = rand(1, currentLimit);
-        let valB = rand(1, currentLimit);
-
-        if (level > 4 && Math.random() > 0.4) {
-            // Force close numbers often in later levels
-            valB = valA + rand(-1, 1);
-            if (valB < 1) valB = 1;
-        }
-
-        let result = 3; // Equal
-        if (valA > valB) result = 1; // Greater
-        if (valA < valB) result = 2; // Less
-
-        return {
-            type: 'comparison',
-            valA,
-            valB,
-            result
-        };
-    }
-
-    // Default fallback
-    return {
-        type: 'counting',
-        valA: 1,
-        result: 1
-    } as GeneratedProblem;
+    // Fallback should typically not happen if types are correct
+    return { type: 'counting', valA: 1, result: 1 };
 }

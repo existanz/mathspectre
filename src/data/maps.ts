@@ -21,20 +21,85 @@ export const LEVEL_COORDINATES: LevelCoordinate[] = [
 
 import { Calculator, Hash, Minus, Scale, type LucideIcon } from 'lucide-react';
 
+
+export interface ProblemConfig {
+    type: 'counting' | 'addition' | 'subtraction' | 'comparison';
+    limit: number;
+    isAdvanced?: boolean;
+}
+
 export interface MapInfo {
     id: string;
     title: string;
     icon: LucideIcon;
     iconUrl?: string;
+    bgImage?: string; // Explicit asset path
     desc: string;
+    problemConfig: ProblemConfig;
 }
 
 export const MAPS: MapInfo[] = [
-    { id: 'map1', title: 'Счет до 10', icon: Hash, iconUrl: '/images/maps/level1_icon.png', desc: 'Учимся считать предметы' },
-    { id: 'map2', title: 'Сложение до 10', icon: Calculator, iconUrl: '/images/maps/level2_icon.png', desc: 'Простые примеры на сложение' },
-    { id: 'map3', title: 'Вычитание до 10', icon: Minus, iconUrl: '/images/maps/level3_icon.png', desc: 'Учимся отнимать' },
-    { id: 'map4', title: 'Больше / Меньше', icon: Scale, iconUrl: '/images/maps/level4_icon.png', desc: 'Сравниваем количества' },
-    { id: 'map5', title: 'Сложение до 20', icon: Calculator, iconUrl: '/images/maps/level5_icon.png', desc: 'Сложные примеры' },
-    { id: 'map6', title: 'Вычитание до 20', icon: Minus, iconUrl: '/images/maps/level6_icon.png', desc: 'Сложное вычитание' },
-    { id: 'map7', title: 'Сравнение до 20', icon: Scale, iconUrl: '/images/maps/level7_icon.png', desc: 'Сравнение больших чисел' },
+    {
+        id: 'map1',
+        title: 'Счет до 10',
+        icon: Hash,
+        iconUrl: '/images/maps/level1_icon.png',
+        bgImage: '/images/maps/level1_map.png',
+        desc: 'Учимся считать предметы',
+        problemConfig: { type: 'counting', limit: 10 }
+    },
+    {
+        id: 'map2',
+        title: 'Сложение до 10',
+        icon: Calculator,
+        iconUrl: '/images/maps/level2_icon.png',
+        bgImage: '/images/maps/level2_map.png',
+        desc: 'Простые примеры на сложение',
+        problemConfig: { type: 'addition', limit: 10 }
+    },
+    {
+        id: 'map3',
+        title: 'Вычитание до 10',
+        icon: Minus,
+        iconUrl: '/images/maps/level3_icon.png',
+        bgImage: '/images/maps/level3_map.png',
+        desc: 'Учимся отнимать',
+        problemConfig: { type: 'subtraction', limit: 10 }
+    },
+    {
+        id: 'map4',
+        title: 'Больше / Меньше',
+        icon: Scale,
+        iconUrl: '/images/maps/level4_icon.png',
+        bgImage: '/images/maps/level4_map.png',
+        desc: 'Сравниваем количества',
+        problemConfig: { type: 'comparison', limit: 10 }
+    },
+    {
+        id: 'map5',
+        title: 'Сложение до 20',
+        icon: Calculator,
+        iconUrl: '/images/maps/level5_icon.png',
+        bgImage: '/images/maps/level5_map.png',
+        desc: 'Сложные примеры',
+        problemConfig: { type: 'addition', limit: 20, isAdvanced: true }
+    },
+    {
+        id: 'map6',
+        title: 'Вычитание до 20',
+        icon: Minus,
+        iconUrl: '/images/maps/level6_icon.png',
+        bgImage: '/images/maps/level6_map.png',
+        desc: 'Сложное вычитание',
+        problemConfig: { type: 'subtraction', limit: 20, isAdvanced: true }
+    },
+    {
+        id: 'map7',
+        title: 'Сравнение до 20',
+        icon: Scale,
+        iconUrl: '/images/maps/level7_icon.png',
+        bgImage: '/images/maps/level7_map.png',
+        desc: 'Сравнение больших чисел',
+        problemConfig: { type: 'comparison', limit: 20, isAdvanced: true }
+    },
 ];

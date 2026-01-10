@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { useGameStore } from '../../store/gameStore';
+import { MAPS } from '../../data/maps';
 import type { LevelCoordinate } from '../../data/maps';
 
 interface MathMapProps {
@@ -16,15 +17,11 @@ export function MathMap({ mapId, onLevelSelect, colorTheme = 'text-brand-primary
 
     // Map-specific configuration
     const mapConfig = useMemo(() => {
-        const match = mapId.match(/^map(\d+)$/);
-        if (match) {
-            const levelNum = match[1];
-            return {
-                bgImage: `/images/maps/level${levelNum}_map.png`,
-                bgSize: 'cover'
-            };
-        }
-        return null; // Fallback or no background
+        const map = MAPS.find(m => m.id === mapId);
+        return map?.bgImage ? {
+            bgImage: map.bgImage,
+            bgSize: 'cover'
+        } : null;
     }, [mapId]);
 
     // Use passed coordinates or map them to the format

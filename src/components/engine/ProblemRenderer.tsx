@@ -93,7 +93,7 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
     return (
         <div className="w-full h-full flex flex-col items-center justify-between py-4 max-w-3xl mx-auto overflow-y-auto hide-scrollbar">
 
-            {/* Problem Display Area */}
+
             <div className="flex flex-col items-center gap-4 w-full flex-1 justify-center min-h-[200px]">
                 <div className="text-5xl md:text-7xl font-bold flex items-center gap-3 text-white drop-shadow-lg font-mono">
                     {problem.type === 'counting' ? (
@@ -129,8 +129,8 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
                             disabled={!currentInput || isCorrect || isError}
                             size="icon"
                             className={`ml-4 w-12 h-12 md:w-16 md:h-16 rounded-xl shadow-lg border-b-4 active:border-b-0 active:translate-y-1 flex-shrink-0 transition-colors duration-200 ${isError
-                                    ? 'bg-red-500 hover:bg-red-600 border-red-700'
-                                    : 'bg-brand-secondary hover:bg-brand-secondary/90 border-brand-secondary/50'
+                                ? 'bg-red-500 hover:bg-red-600 border-red-700'
+                                : 'bg-brand-secondary hover:bg-brand-secondary/90 border-brand-secondary/50'
                                 }`}
                         >
                             <span className="text-xl font-bold">
@@ -140,7 +140,6 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
                     </motion.div>
                 </div>
 
-                {/* Visual Hints Area */}
                 <div className="w-full min-h-[160px] flex items-center justify-center px-4">
                     <AnimatePresence mode="wait">
                         {(hintLevel !== HintLevel.NONE || problem.type === 'counting') && (
@@ -154,7 +153,9 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
                                     type={problem.type}
                                     valueA={problem.valA}
                                     valueB={problem.valB}
-                                    showTotal={hintLevel === HintLevel.SHOW_RESULT || problem.type === 'counting'}
+                                    hintLevel={hintLevel}
+                                    // Legacy support/fallback for components not using hintLevel yet
+                                    showTotal={hintLevel >= HintLevel.SHOW_RESULT || problem.type === 'counting'}
                                 />
                             </motion.div>
                         )}
@@ -172,7 +173,6 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
                 </div>
             </div>
 
-            {/* Input Area */}
             <div className="w-full flex flex-col items-center gap-2 pb-4 px-4">
                 {problem.type === 'comparison' ? (
                     <ComparisonKeypad onInput={handleComparisonInput} disabled={isCorrect} />
@@ -184,7 +184,6 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
 
 
             </div>
-            {/* Victory Modal */}
             <AnimatePresence>
                 {showVictory && (
                     <VictoryModal

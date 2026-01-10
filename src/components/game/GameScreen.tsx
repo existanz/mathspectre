@@ -4,6 +4,7 @@ import { ProblemRenderer } from '../engine/ProblemRenderer';
 import { generateProblem } from '../../engine/generator';
 import { useGameStore } from '../../store/gameStore';
 import { ArrowLeft } from 'lucide-react';
+import { MAPS } from '../../data/maps';
 
 interface GameScreenProps {
     mapId: string;
@@ -16,9 +17,15 @@ export function GameScreen({ mapId, levelId, onBack, onComplete }: GameScreenPro
     const { completeLevel } = useGameStore();
 
     // Generate problem once on mount for this specific level interaction
-    // In a real app we might want a "Retry" to generate a DIFFERENT problem, 
-    // but for now 1 level = 1 problem instance per session is fine, or we can regenerate.
-    const problem = useMemo(() => generateProblem(mapId, levelId), [mapId, levelId]);
+    // In a real app we might want a "Retry" to generate a DIFFERENT problem.
+    const problem = useMemo(() => {
+        const map = MAPS.find(m => m.id === mapId);
+        if (!map) {
+            // Fallback config if map not found (shouldn't happen)
+            return generateProblem({ type: 'counting', limit: 10 }, levelId);
+        }
+        return generateProblem(map.problemConfig, levelId);
+    }, [mapId, levelId]);
 
     const handleProblemComplete = (stars: 0 | 1 | 2 | 3) => {
         const levelKey = `${mapId}_level${levelId}`;

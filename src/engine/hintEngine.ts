@@ -4,6 +4,7 @@ export const HintLevel = {
     NONE: 0,
     SHOW_PARTS: 1, // e.g., show 3 apples and 2 oranges
     SHOW_RESULT: 2, // e.g., show 5 total fruit
+    SHOW_ANSWER: 3, // e.g., show only the final result visually
 } as const;
 
 export type HintLevel = typeof HintLevel[keyof typeof HintLevel];
@@ -12,10 +13,11 @@ interface UseHintEngineProps {
     thresholds?: {
         showParts: number; // Attempts before showing parts (default 1)
         showResult: number; // Attempts before showing result (default 2)
+        showAnswer: number; // Attempts before showing answer (default 3)
     };
 }
 
-export function useHintEngine({ thresholds = { showParts: 1, showResult: 2 } }: UseHintEngineProps = {}) {
+export function useHintEngine({ thresholds = { showParts: 1, showResult: 2, showAnswer: 3 } }: UseHintEngineProps = {}) {
     const [attempts, setAttempts] = useState(0);
     const [isCorrect, setIsCorrect] = useState(false);
 
@@ -35,7 +37,9 @@ export function useHintEngine({ thresholds = { showParts: 1, showResult: 2 } }: 
     }, []);
 
     let hintLevel: HintLevel = HintLevel.NONE;
-    if (attempts >= thresholds.showResult) {
+    if (attempts >= thresholds.showAnswer) {
+        hintLevel = HintLevel.SHOW_ANSWER;
+    } else if (attempts >= thresholds.showResult) {
         hintLevel = HintLevel.SHOW_RESULT;
     } else if (attempts >= thresholds.showParts) {
         hintLevel = HintLevel.SHOW_PARTS;
