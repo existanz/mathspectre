@@ -33,7 +33,7 @@ export interface MapInfo {
     title: string;
     icon: LucideIcon;
     iconUrl?: string;
-    bgImage?: string; // Explicit asset path
+    bgImage?: string;
     desc: string;
     problemConfig: ProblemConfig;
 }

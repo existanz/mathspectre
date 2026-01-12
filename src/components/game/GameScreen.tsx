@@ -16,12 +16,9 @@ interface GameScreenProps {
 export function GameScreen({ mapId, levelId, onBack, onComplete }: GameScreenProps) {
     const { completeLevel } = useGameStore();
 
-    // Generate problem once on mount for this specific level interaction
-    // In a real app we might want a "Retry" to generate a DIFFERENT problem.
     const problem = useMemo(() => {
         const map = MAPS.find(m => m.id === mapId);
         if (!map) {
-            // Fallback config if map not found (shouldn't happen)
             return generateProblem({ type: 'counting', limit: 10 }, levelId);
         }
         return generateProblem(map.problemConfig, levelId);
@@ -30,12 +27,11 @@ export function GameScreen({ mapId, levelId, onBack, onComplete }: GameScreenPro
     const handleProblemComplete = (stars: 0 | 1 | 2 | 3) => {
         const levelKey = `${mapId}_level${levelId}`;
         completeLevel(levelKey, stars);
-        onComplete(); // Go back to map or next level logic
+        onComplete();
     };
 
     return (
         <div className="w-full h-full flex flex-col relative bg-slate-900/50">
-            {/* Header */}
             <div className="w-full p-4 flex items-center justify-between absolute top-0 left-0 z-10">
                 <Button
                     variant="secondary"
@@ -50,10 +46,9 @@ export function GameScreen({ mapId, levelId, onBack, onComplete }: GameScreenPro
                     Уровень {levelId}
                 </div>
 
-                <div className="w-12" /> {/* Spacer for centering */}
+                <div className="w-12" />
             </div>
 
-            {/* Game Content */}
             <div className="flex-1 w-full h-full pt-16">
                 <ProblemRenderer
                     problem={problem}

@@ -24,14 +24,12 @@ export function StarRating({ stars, size = 'md', className = '' }: StarRatingPro
         <div className={`flex ${containerClasses[size]} ${className}`}>
             {[1, 2, 3].map((index) => (
                 <div key={index} className="relative">
-                    {/* Background/Empty Star */}
                     <Star
                         className={`${sizeClasses[size]} text-gray-700/50`}
                         fill="currentColor"
                         strokeWidth={0}
                     />
 
-                    {/* Active Star Overlay */}
                     {index <= stars && (
                         <motion.div
                             initial={{ scale: 0, rotate: -180 }}

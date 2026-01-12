@@ -62,7 +62,6 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
                 setShowVictory(true);
             }
         } else {
-            // Error animation
             setIsError(true);
             setTimeout(() => {
                 setIsError(false);
@@ -72,7 +71,6 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
         }
     };
 
-    // Keyboard support
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (isCorrect) return;
@@ -154,7 +152,6 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
                                     valueA={problem.valA}
                                     valueB={problem.valB}
                                     hintLevel={hintLevel}
-                                    // Legacy support/fallback for components not using hintLevel yet
                                     showTotal={hintLevel >= HintLevel.SHOW_RESULT || problem.type === 'counting'}
                                 />
                             </motion.div>

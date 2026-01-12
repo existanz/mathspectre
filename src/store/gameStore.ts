@@ -12,7 +12,6 @@ interface GameState {
     unlockedMaps: string[];
     levels: Record<string, LevelProgress>;
 
-    // Actions
     completeLevel: (levelId: string, stars: 0 | 1 | 2 | 3) => void;
     unlockMap: (mapId: string) => void;
     setCurrentMap: (mapId: string) => void;
@@ -40,11 +39,9 @@ export const useGameStore = create<GameState>()(
                     };
                 });
 
-                // Check for map completion logic
                 const state = get();
                 const currentMapId = state.currentMapId;
 
-                // Calculate total stars for current map
                 let currentMapStars = 0;
                 const maxStars = LEVEL_COORDINATES.length * 3;
 

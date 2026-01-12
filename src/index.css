@@ -21,7 +21,6 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  /* Prevent scrolling/bouncing on touch devices for game feel */
   overscroll-behavior: none;
   overflow: hidden; 
 }

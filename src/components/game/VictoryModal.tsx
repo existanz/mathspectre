@@ -20,22 +20,18 @@ export function VictoryModal({ stars, onNext }: VictoryModalProps) {
     const [title] = useState(() => TITLES[Math.floor(Math.random() * TITLES.length)]);
     const [visibleStars, setVisibleStars] = useState(0);
 
-    // Sequence the stars animation
     useEffect(() => {
         let mounted = true;
 
         const sequence = async () => {
-            // Initial delay before stars start filling
             await new Promise(r => setTimeout(r, 500));
 
             for (let i = 1; i <= stars; i++) {
                 if (!mounted) return;
                 setVisibleStars(i);
-                // Delay between stars
                 await new Promise(r => setTimeout(r, 600));
             }
 
-            // Delay before auto-advancing
             if (mounted) {
                 await new Promise(r => setTimeout(r, 1000));
                 onNext();
@@ -100,7 +96,6 @@ export function VictoryModal({ stars, onNext }: VictoryModalProps) {
                 </div>
 
                 <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
-                    {/* <VictoryEffects /> */}
                 </div>
             </motion.div>
         </div>

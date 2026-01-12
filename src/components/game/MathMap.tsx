@@ -15,7 +15,6 @@ interface MathMapProps {
 export function MathMap({ mapId, onLevelSelect, colorTheme = 'text-brand-primary', levelCoordinates }: MathMapProps) {
     const { levels } = useGameStore();
 
-    // Map-specific configuration
     const mapConfig = useMemo(() => {
         const map = MAPS.find(m => m.id === mapId);
         return map?.bgImage ? {
@@ -24,7 +23,6 @@ export function MathMap({ mapId, onLevelSelect, colorTheme = 'text-brand-primary
         } : null;
     }, [mapId]);
 
-    // Use passed coordinates or map them to the format
     const nodes = levelCoordinates;
 
     return (
@@ -37,7 +35,6 @@ export function MathMap({ mapId, onLevelSelect, colorTheme = 'text-brand-primary
                     backgroundPosition: 'center'
                 } : undefined}
             >
-                {/* SVG Path connecting nodes */}
                 <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 100 100" preserveAspectRatio="none">
                     <path
                         d={`M ${nodes.map(n => `${n.x} ${n.y}`).join(' L ')}`}
@@ -50,11 +47,9 @@ export function MathMap({ mapId, onLevelSelect, colorTheme = 'text-brand-primary
                     />
                 </svg>
 
-                {/* Level Nodes */}
                 {nodes.map((node, index) => {
                     const levelKey = `${mapId}_level${node.id}`;
                     const levelData = levels[levelKey];
-                    // Level 1 is always unlocked. Others depend on previous completion.
                     const isUnlocked = index === 0 || levels[`${mapId}_level${index}`]?.completed;
                     const isCompleted = levelData?.completed;
 
@@ -80,17 +75,11 @@ export function MathMap({ mapId, onLevelSelect, colorTheme = 'text-brand-primary
                             {isCompleted && (
                                 <div className="absolute w-24 h-24 pointer-events-none flex items-center justify-center top-1">
                                     {Array.from({ length: 3 }).map((_, i) => {
-                                        // Calculate position for semi-circle (arc)
-                                        // Angles: -45, 0, 45 degrees relative to bottom
-                                        // Or better visually: 150, 180, 210 degrees standard circle terms if 0 is right?
-                                        // Let's place them around the bottom center.
-                                        // Arc from 135 to 45 (downwards).
-                                        // Let's keep it simple: -30, 0, 30 degrees from vertical down.
                                         const angleConfig = [-30, 0, 30];
                                         const angle = angleConfig[i] * (Math.PI / 180);
-                                        const radius = 32; // Distance from center number
-                                        const starX = Math.sin(angle) * radius; // sin for x offset
-                                        const starY = Math.cos(angle) * radius; // cos for y offset (down)
+                                        const radius = 32;
+                                        const starX = Math.sin(angle) * radius;
+                                        const starY = Math.cos(angle) * radius;
 
                                         return (
                                             <div

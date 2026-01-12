@@ -27,10 +27,8 @@ function App() {
     };
 
     const handleGameComplete = () => {
-        // Return to map after completion to show stars update
         setView('MAP');
         setActiveLevel(null);
-        // Map unlocking is handled automatically in store
     };
 
     return (

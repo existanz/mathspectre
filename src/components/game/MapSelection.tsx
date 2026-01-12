@@ -20,7 +20,6 @@ export function MapSelection({ onSelect }: MapSelectionProps) {
                     const isUnlocked = unlockedMaps.includes(map.id);
                     const Icon = map.icon;
 
-                    // Calculate stars
                     let earnedStars = 0;
                     if (isUnlocked) {
                         LEVEL_COORDINATES.forEach(coord => {
@@ -33,7 +32,6 @@ export function MapSelection({ onSelect }: MapSelectionProps) {
                     }
 
                     const progressPercent = earnedStars / totalStars;
-                    // Red (0) -> Green (120)
                     const hue = Math.min(120, Math.max(0, progressPercent * 120));
                     const progressColor = `hsl(${hue}, 80%, 45%)`;
 
@@ -53,9 +51,7 @@ export function MapSelection({ onSelect }: MapSelectionProps) {
                             disabled={!isUnlocked}
                         >
                             <div className="flex flex-row items-center w-full h-full relative z-10">
-                                {/* Left Side: Progress/Lock + Details */}
                                 <div className="flex-1 flex flex-col justify-between h-full pr-4">
-                                    {/* Progress / Lock */}
                                     <div className="flex items-center gap-4">
                                         {isUnlocked ? (
                                             <div className="relative w-16 h-16 shrink-0">
@@ -92,18 +88,14 @@ export function MapSelection({ onSelect }: MapSelectionProps) {
                                                 <Lock size={24} className="text-gray-500" />
                                             </div>
                                         )}
-
-                                        {/* Stars Text Label (Optional, or just keep it minimal) */}
                                     </div>
 
-                                    {/* Text Details */}
                                     <div className="mt-2">
                                         <h3 className="text-2xl font-bold mb-1 leading-tight">{map.title}</h3>
                                         <p className="text-sm opacity-80 leading-snug">{map.desc}</p>
                                     </div>
                                 </div>
 
-                                {/* Right Side: Big Icon */}
                                 <div className={`w-32 h-32 flex items-center justify-center shrink-0 ${isUnlocked ? 'opacity-100' : 'opacity-30 grayscale'}`}>
                                     {map.iconUrl ? (
                                         <img
@@ -116,8 +108,6 @@ export function MapSelection({ onSelect }: MapSelectionProps) {
                                     )}
                                 </div>
                             </div>
-
-                            {/* Decorative Background Icon (Optional, keeping cleaner look for now or could add faint BG) */}
                         </motion.button>
                     )
                 })}
