@@ -15,10 +15,11 @@ interface UseHintEngineProps {
         showResult: number;
         showAnswer: number;
     };
+    initialAttempts?: number;
 }
 
-export function useHintEngine({ thresholds = { showParts: 1, showResult: 2, showAnswer: 3 } }: UseHintEngineProps = {}) {
-    const [attempts, setAttempts] = useState(0);
+export function useHintEngine({ thresholds = { showParts: 1, showResult: 2, showAnswer: 3 }, initialAttempts = 0 }: UseHintEngineProps = {}) {
+    const [attempts, setAttempts] = useState(initialAttempts);
     const [isCorrect, setIsCorrect] = useState(false);
 
     const registerAttempt = useCallback((correct: boolean) => {

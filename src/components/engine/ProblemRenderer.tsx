@@ -16,14 +16,16 @@ interface Problem {
 
 interface ProblemRendererProps {
     problem: Problem;
+    initialAttempts?: number;
     onComplete: (stars: 0 | 1 | 2 | 3) => void;
+    onAttempt?: (attempts: number) => void;
 }
 
-export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
+export function ProblemRenderer({ problem, onComplete, initialAttempts = 0, onAttempt }: ProblemRendererProps) {
     const [currentInput, setCurrentInput] = useState<string>('');
     const [showVictory, setShowVictory] = useState(false);
     const [isError, setIsError] = useState(false);
-    const { hintLevel, registerAttempt, stars, isCorrect } = useHintEngine();
+    const { hintLevel, registerAttempt, stars, isCorrect, attempts } = useHintEngine({ initialAttempts });
 
     const handleInput = (num: number) => {
         if (isCorrect) return;
@@ -66,6 +68,9 @@ export function ProblemRenderer({ problem, onComplete }: ProblemRendererProps) {
             setTimeout(() => {
                 setIsError(false);
                 registerAttempt(false);
+                if (onAttempt) {
+                    onAttempt(attempts + 1);
+                }
                 setCurrentInput('');
             }, 500);
         }

@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Button } from '../ui/Button';
 import { ProblemRenderer } from '../engine/ProblemRenderer';
-import { generateProblem } from '../../engine/generator';
+import { generateProblem, type GeneratedProblem } from '../../engine/generator';
 import { useGameStore } from '../../store/gameStore';
 import { ArrowLeft } from 'lucide-react';
 import { MAPS } from '../../data/maps';
@@ -14,21 +14,43 @@ interface GameScreenProps {
 }
 
 export function GameScreen({ mapId, levelId, onBack, onComplete }: GameScreenProps) {
-    const { completeLevel } = useGameStore();
+    const { completeLevel, activeSessions, saveSession, clearSession } = useGameStore();
+    const [problem, setProblem] = useState<GeneratedProblem | null>(null);
+    const [initialAttempts, setInitialAttempts] = useState(0);
 
-    const problem = useMemo(() => {
-        const map = MAPS.find(m => m.id === mapId);
-        if (!map) {
-            return generateProblem({ type: 'counting', limit: 10 }, levelId);
+    const levelKey = `${mapId}_level${levelId}`;
+
+    useEffect(() => {
+        const existingSession = activeSessions[levelKey];
+
+        if (existingSession) {
+            setProblem(existingSession.problem);
+            setInitialAttempts(existingSession.attempts);
+        } else {
+            const map = MAPS.find(m => m.id === mapId);
+            const newProblem = map
+                ? generateProblem(map.problemConfig, levelId)
+                : generateProblem({ type: 'counting', limit: 10 }, levelId);
+
+            setProblem(newProblem);
+            setInitialAttempts(0);
+            saveSession(levelKey, { problem: newProblem, attempts: 0 });
         }
-        return generateProblem(map.problemConfig, levelId);
-    }, [mapId, levelId]);
+    }, [mapId, levelId, levelKey]);
+
+    const handleAttempt = useCallback((attempts: number) => {
+        if (problem) {
+            saveSession(levelKey, { problem, attempts });
+        }
+    }, [problem, saveSession, levelKey]);
 
     const handleProblemComplete = (stars: 0 | 1 | 2 | 3) => {
-        const levelKey = `${mapId}_level${levelId}`;
         completeLevel(levelKey, stars);
+        clearSession(levelKey);
         onComplete();
     };
+
+    if (!problem) return null;
 
     return (
         <div className="w-full h-full flex flex-col relative bg-slate-900/50">
@@ -52,6 +74,8 @@ export function GameScreen({ mapId, levelId, onBack, onComplete }: GameScreenPro
             <div className="flex-1 w-full h-full pt-16">
                 <ProblemRenderer
                     problem={problem}
+                    initialAttempts={initialAttempts}
+                    onAttempt={handleAttempt}
                     onComplete={handleProblemComplete}
                 />
             </div>

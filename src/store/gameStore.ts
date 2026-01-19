@@ -1,6 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { LEVEL_COORDINATES, MAPS } from '../data/maps';
+import type { GeneratedProblem } from '../engine/generator';
+
+export interface ActiveSession {
+    problem: GeneratedProblem;
+    attempts: number;
+}
 
 export interface LevelProgress {
     stars: 0 | 1 | 2 | 3;
@@ -11,8 +17,11 @@ interface GameState {
     currentMapId: string;
     unlockedMaps: string[];
     levels: Record<string, LevelProgress>;
+    activeSessions: Record<string, ActiveSession>;
 
     completeLevel: (levelId: string, stars: 0 | 1 | 2 | 3) => void;
+    saveSession: (levelId: string, session: ActiveSession) => void;
+    clearSession: (levelId: string) => void;
     unlockMap: (mapId: string) => void;
     setCurrentMap: (mapId: string) => void;
     resetProgress: () => void;
@@ -24,6 +33,7 @@ export const useGameStore = create<GameState>()(
             currentMapId: 'map1',
             unlockedMaps: ['map1'],
             levels: {},
+            activeSessions: {},
 
             completeLevel: (levelId, stars) => {
                 set((state) => {
@@ -62,6 +72,19 @@ export const useGameStore = create<GameState>()(
                 }
             },
 
+            saveSession: (levelId, session) => set((state) => ({
+                activeSessions: {
+                    ...state.activeSessions,
+                    [levelId]: session
+                }
+            })),
+
+            clearSession: (levelId) => set((state) => {
+                const newSessions = { ...state.activeSessions };
+                delete newSessions[levelId];
+                return { activeSessions: newSessions };
+            }),
+
             unlockMap: (mapId) => set((state) => ({
                 unlockedMaps: state.unlockedMaps.includes(mapId)
                     ? state.unlockedMaps
@@ -73,7 +96,8 @@ export const useGameStore = create<GameState>()(
             resetProgress: () => set({
                 currentMapId: 'map1',
                 unlockedMaps: ['map1'],
-                levels: {}
+                levels: {},
+                activeSessions: {}
             }),
         }),
         {
